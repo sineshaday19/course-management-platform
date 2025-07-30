@@ -1,0 +1,142 @@
+### Course Management Platform API Tests
+### Save this file as `api-tests.rest` and use VS Code REST Client extension
+
+### 1. Health Check
+GET http://localhost:3000/health
+
+### 2. Register Manager
+POST http://localhost:3000/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test Manager",
+  "email": "manager@test.com",
+  "password": "TestPassword123!",
+  "role": "manager"
+}
+
+### 3. Login to get JWT Token
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "manager@test.com",
+  "password": "TestPassword123!"
+}
+
+### 4. Create a Module
+POST http://localhost:3000/api/v1/modules
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "name": "Advanced Backend",
+  "code": "CS401",
+  "half": "H1",
+  "credits": 15,
+  "description": "Advanced backend development"
+}
+
+### 5. Create a Cohort
+POST http://localhost:3000/api/v1/cohorts
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "name": "Cohort 2024"
+}
+
+### 6. Create a Class
+POST http://localhost:3000/api/v1/classes
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "name": "2024M",
+  "startDate": "2024-07-13",
+  "graduationDate": "2024-07-30"
+}
+
+### 7. Create a Facilitator
+POST http://localhost:3000/api/v1/facilitators
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@test.com",
+  "qualification": "Masters",
+  "location": "Kigali",
+  "managerId": "{{manager_id}}"
+}
+
+### 8. Create a Mode
+POST http://localhost:3000/api/v1/modes
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "name": "Online",
+  "description": "Online delivery mode"
+}
+
+### 9. Create Allocation with Cohort Filtering
+POST http://localhost:3000/api/v1/allocations
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "moduleId": "{{module_id}}",
+  "classId": "{{class_id}}",
+  "cohortId": "{{cohort_id}}",
+  "facilitatorId": "{{facilitator_id}}",
+  "trimester": 1,
+  "modeId": "{{mode_id}}",
+  "year": 2025
+}
+
+### 10. Test Cohort Filtering
+GET http://localhost:3000/api/v1/allocations?cohortId={{cohort_id}}
+Authorization: Bearer {{jwt_token}}
+
+### 11. Test Multiple Filtering
+GET http://localhost:3000/api/v1/allocations?cohortId={{cohort_id}}&trimester=1&year=2025
+Authorization: Bearer {{jwt_token}}
+
+### 12. Create Activity Log
+POST http://localhost:3000/api/v1/activity-tracker
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+  "allocationId": "{{allocation_id}}",
+  "weekNumber": 5,
+  "attendance": [
+    {"day1": true},
+    {"day2": false},
+    {"day3": true}
+  ],
+  "formativeOneGrading": "Done",
+  "formativeTwoGrading": "Pending",
+  "summativeGrading": "Not Started",
+  "courseModeration": "Done",
+  "intranetSync": "Pending",
+  "gradeBookStatus": "Not Started",
+  "notes": "Week 5 activity log"
+}
+
+### 13. Get Activity Logs
+GET http://localhost:3000/api/v1/activity-tracker?weekNumber=5
+Authorization: Bearer {{jwt_token}}
+
+### 14. Get All Allocations
+GET http://localhost:3000/api/v1/allocations
+Authorization: Bearer {{jwt_token}}
+
+### 15. Get All Modules
+GET http://localhost:3000/api/v1/modules
+Authorization: Bearer {{jwt_token}}
+
+### 16. Get All Cohorts
+GET http://localhost:3000/api/v1/cohorts
+Authorization: Bearer {{jwt_token}} 

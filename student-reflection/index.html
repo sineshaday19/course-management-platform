@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Reflection Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .language-switcher {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .lang-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .lang-btn.active {
+            background: #764ba2;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 data-i18n="title">Student Reflection Page</h1>
+            <p data-i18n="subtitle">Track your learning journey and reflect on your progress</p>
+        </div>
+
+        <div class="language-switcher">
+            <button class="lang-btn active" onclick="changeLanguage('en')">English</button>
+            <button class="lang-btn" onclick="changeLanguage('es')">Español</button>
+            <button class="lang-btn" onclick="changeLanguage('fr')">Français</button>
+        </div>
+
+        <div class="section">
+            <h2 data-i18n="weeklyReflection">Weekly Reflection</h2>
+            <div class="card">
+                <h3 data-i18n="week1Title">Week 1: Getting Started</h3>
+                <p data-i18n="week1Content">This week I learned about the fundamentals of web development. The course structure is well-organized and the instructor provides clear explanations.</p>
+            </div>
+            <div class="card">
+                <h3 data-i18n="week2Title">Week 2: Deep Dive</h3>
+                <p data-i18n="week2Content">The second week was challenging but rewarding. I struggled with some concepts initially, but through practice and collaboration with classmates, I gained a better understanding.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 data-i18n="goalsTitle">Learning Goals</h2>
+            <div class="card">
+                <h3 data-i18n="shortTerm">Short-term Goals</h3>
+                <p data-i18n="shortTermContent">Complete all weekly assignments on time, participate actively in discussions, and improve my coding skills through practice.</p>
+            </div>
+            <div class="card">
+                <h3 data-i18n="longTerm">Long-term Goals</h3>
+                <p data-i18n="longTermContent">Build a portfolio of projects, master advanced concepts, and prepare for a career in web development.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Student Reflection Page",
+                subtitle: "Track your learning journey and reflect on your progress",
+                weeklyReflection: "Weekly Reflection",
+                week1Title: "Week 1: Getting Started",
+                week1Content: "This week I learned about the fundamentals of web development. The course structure is well-organized and the instructor provides clear explanations.",
+                week2Title: "Week 2: Deep Dive",
+                week2Content: "The second week was challenging but rewarding. I struggled with some concepts initially, but through practice and collaboration with classmates, I gained a better understanding.",
+                goalsTitle: "Learning Goals",
+                shortTerm: "Short-term Goals",
+                shortTermContent: "Complete all weekly assignments on time, participate actively in discussions, and improve my coding skills through practice.",
+                longTerm: "Long-term Goals",
+                longTermContent: "Build a portfolio of projects, master advanced concepts, and prepare for a career in web development."
+            },
+            es: {
+                title: "Página de Reflexión del Estudiante",
+                subtitle: "Rastrea tu viaje de aprendizaje y reflexiona sobre tu progreso",
+                weeklyReflection: "Reflexión Semanal",
+                week1Title: "Semana 1: Comenzando",
+                week1Content: "Esta semana aprendí sobre los fundamentos del desarrollo web. La estructura del curso está bien organizada y el instructor proporciona explicaciones claras.",
+                week2Title: "Semana 2: Inmersión Profunda",
+                week2Content: "La segunda semana fue desafiante pero gratificante. Tuve dificultades con algunos conceptos inicialmente, pero a través de la práctica y la colaboración con compañeros de clase, obtuve una mejor comprensión.",
+                goalsTitle: "Objetivos de Aprendizaje",
+                shortTerm: "Objetivos a Corto Plazo",
+                shortTermContent: "Completar todas las tareas semanales a tiempo, participar activamente en las discusiones y mejorar mis habilidades de programación a través de la práctica.",
+                longTerm: "Objetivos a Largo Plazo",
+                longTermContent: "Construir un portafolio de proyectos, dominar conceptos avanzados y prepararme para una carrera en desarrollo web."
+            },
+            fr: {
+                title: "Page de Réflexion de l'Étudiant",
+                subtitle: "Suivez votre parcours d'apprentissage et réfléchissez à vos progrès",
+                weeklyReflection: "Réflexion Hebdomadaire",
+                week1Title: "Semaine 1: Commencer",
+                week1Content: "Cette semaine, j'ai appris les fondamentaux du développement web. La structure du cours est bien organisée et l'instructeur fournit des explications claires.",
+                week2Title: "Semaine 2: Plongée Profonde",
+                week2Content: "La deuxième semaine était difficile mais enrichissante. J'ai eu du mal avec certains concepts au début, mais grâce à la pratique et à la collaboration avec mes camarades de classe, j'ai acquis une meilleure compréhension.",
+                goalsTitle: "Objectifs d'Apprentissage",
+                shortTerm: "Objectifs à Court Terme",
+                shortTermContent: "Terminer tous les devoirs hebdomadaires à temps, participer activement aux discussions et améliorer mes compétences de programmation grâce à la pratique.",
+                longTerm: "Objectifs à Long Terme",
+                longTermContent: "Construire un portfolio de projets, maîtriser les concepts avancés et me préparer à une carrière dans le développement web."
+            }
+        };
+
+        function changeLanguage(lang) {
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update page title
+            document.title = translations[lang].title;
+        }
+
+        // Initialize with English
+        document.addEventListener('DOMContentLoaded', function() {
+            changeLanguage('en');
+        });
+    </script>
+</body>
+</html> 
