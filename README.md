@@ -2,7 +2,9 @@
 
 A comprehensive backend system for academic institutions supporting faculty operations, student progress monitoring, and academic coordination. Built with Node.js, Express, MySQL, and Sequelize.
 
-DEMO LINK: https://youtu.be/lLWI55m_f2s
+**DEMO LINK**: https://youtu.be/lLWI55m_f2s
+
+- **GitHub Pages Hosting** - [Live Demo](https://sineshaday19.github.io/student-reflection-page)
 
 ## Project Overview
 
