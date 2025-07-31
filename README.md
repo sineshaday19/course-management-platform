@@ -1,7 +1,7 @@
 # Course Management Platform
 
 A comprehensive backend system for academic institutions supporting faculty operations, student progress monitoring, and academic coordination. Built with Node.js, Express, MySQL, and Sequelize.
-
+DEMO LINK: https://youtu.be/lLWI55m_f2s
 ## Project Overview
 
 This platform consists of three core modules:
