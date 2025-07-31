@@ -4,6 +4,7 @@ const { ActivityTracker, CourseAllocation, Module, Class, Facilitator } = requir
 const { authorizeManager, authorizeFacilitator } = require('../middleware/auth');
 const { redisClient } = require('../config/redis');
 const { ValidationError, NotFoundError } = require('../middleware/errorHandler');
+const NotificationService = require('../services/notificationService');
 
 const router = express.Router();
 
@@ -361,14 +362,12 @@ router.post('/', [
     });
 
     // Send notification to manager about new activity log
-    await redisClient.lpush('notifications', JSON.stringify({
-      type: 'ACTIVITY_LOG_CREATED',
-      facilitatorId: req.user.id,
-      facilitatorName: req.user.name,
-      allocationId,
-      weekNumber,
-      timestamp: new Date().toISOString()
-    }));
+    try {
+      await NotificationService.sendSubmissionAlertToManager(activityLog);
+    } catch (notificationError) {
+      console.error('Failed to send notification:', notificationError);
+      // Don't fail the request if notification fails
+    }
 
     // Fetch the created log with related data
     const createdLog = await ActivityTracker.findByPk(activityLog.id, {
@@ -514,13 +513,12 @@ router.put('/:id', [
     await activityLog.update(updateData);
 
     // Send notification about log update
-    await redisClient.lpush('notifications', JSON.stringify({
-      type: 'ACTIVITY_LOG_UPDATED',
-      facilitatorId: activityLog.allocation.facilitatorId,
-      allocationId: activityLog.allocationId,
-      weekNumber: activityLog.weekNumber,
-      timestamp: new Date().toISOString()
-    }));
+    try {
+      await NotificationService.sendSubmissionAlertToManager(activityLog);
+    } catch (notificationError) {
+      console.error('Failed to send notification:', notificationError);
+      // Don't fail the request if notification fails
+    }
 
     // Fetch updated log with related data
     const updatedLog = await ActivityTracker.findByPk(id, {

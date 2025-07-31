@@ -1,9 +1,3 @@
-#!/usr/bin/env node
-
-/**
- * Production Deployment Script
- * Sets up the Course Management Platform for production deployment
- */
 
 const fs = require('fs');
 const path = require('path');

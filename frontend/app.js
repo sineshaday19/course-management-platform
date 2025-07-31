@@ -1,8 +1,8 @@
-// Course Management Platform Frontend
 class CourseManagementApp {
     constructor() {
-        this.apiBaseUrl = 'http://localhost:3001';
+        this.apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : `http://${window.location.hostname}:3000`;
         this.token = localStorage.getItem('authToken');
+        this.refreshToken = localStorage.getItem('refreshToken');
         this.user = JSON.parse(localStorage.getItem('user'));
         
         this.initializeEventListeners();
@@ -57,15 +57,17 @@ class CourseManagementApp {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password, role: document.getElementById('loginRole').value || 'manager' })
             });
 
             const data = await response.json();
 
             if (data.success) {
                 this.token = data.data.token;
+                this.refreshToken = data.data.refreshToken;
                 this.user = data.data.user;
                 localStorage.setItem('authToken', this.token);
+                localStorage.setItem('refreshToken', this.refreshToken);
                 localStorage.setItem('user', JSON.stringify(this.user));
                 this.showDashboard();
                 this.showStatus('Login successful!', 'success');
@@ -81,6 +83,10 @@ class CourseManagementApp {
         const name = document.getElementById('registerName').value;
         const email = document.getElementById('registerEmail').value;
         const password = document.getElementById('registerPassword').value;
+        const role = document.getElementById('registerRole').value || 'facilitator';
+        const invitationCode = document.getElementById('invitationCode').value;
+        const qualification = document.getElementById('qualification')?.value;
+        const location = document.getElementById('location')?.value;
 
         try {
             const response = await fetch(`${this.apiBaseUrl}/api/v1/auth/register`, {
@@ -92,7 +98,10 @@ class CourseManagementApp {
                     name, 
                     email, 
                     password, 
-                    role: 'manager' 
+                    role,
+                    invitationCode: role === 'manager' ? invitationCode : undefined,
+                    qualification: role === 'facilitator' ? qualification : undefined,
+                    location: role === 'facilitator' ? location : undefined
                 })
             });
 
@@ -112,8 +121,10 @@ class CourseManagementApp {
 
     logout() {
         this.token = null;
+        this.refreshToken = null;
         this.user = null;
         localStorage.removeItem('authToken');
+        localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
         this.showLogin();
         this.showStatus('Logged out successfully', 'success');
@@ -135,8 +146,76 @@ class CourseManagementApp {
         document.getElementById('userInfo').classList.remove('hidden');
         document.getElementById('userName').textContent = this.user.name;
         
-        // Load initial allocations
+        // Load initial allocations and entity IDs
         this.loadAllocations();
+        this.loadEntityIds();
+    }
+
+    async refreshToken() {
+        if (!this.refreshToken) {
+            throw new Error('No refresh token available');
+        }
+
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/api/v1/auth/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ refreshToken: this.refreshToken })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.token = data.data.token;
+                localStorage.setItem('authToken', this.token);
+                console.log('Token refreshed successfully');
+                return true;
+            } else {
+                throw new Error(data.message || 'Token refresh failed');
+            }
+        } catch (error) {
+            console.error('Token refresh failed:', error);
+            this.logout();
+            throw error;
+        }
+    }
+
+    async makeAuthenticatedRequest(url, options = {}) {
+        try {
+            // Add authorization header
+            const headers = {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            const response = await fetch(url, {
+                ...options,
+                headers
+            });
+
+            // If token expired, try to refresh
+            if (response.status === 401) {
+                console.log('Token expired, attempting refresh...');
+                await this.refreshToken();
+                
+                // Retry the request with new token
+                headers.Authorization = `Bearer ${this.token}`;
+                const retryResponse = await fetch(url, {
+                    ...options,
+                    headers
+                });
+                
+                return retryResponse;
+            }
+
+            return response;
+        } catch (error) {
+            console.error('Request failed:', error);
+            throw error;
+        }
     }
 
     async loadAllocations() {
@@ -155,12 +234,8 @@ class CourseManagementApp {
         this.showLoading(true);
 
         try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${this.token}`,
-                    'Content-Type': 'application/json'
-                }
+            const response = await this.makeAuthenticatedRequest(url, {
+                method: 'GET'
             });
 
             const data = await response.json();
@@ -204,8 +279,14 @@ class CourseManagementApp {
             card.className = 'bg-white border border-gray-200 rounded-lg p-6 card-hover';
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-4">
-                    <h4 class="text-lg font-semibold text-gray-800">Allocation ${allocation.id}</h4>
+                    <h4 class="text-lg font-semibold text-gray-800">Allocation ID: ${allocation.id}</h4>
                     <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Active</span>
+                </div>
+                <div class="mb-2 p-2 bg-gray-100 rounded text-xs">
+                    <strong>Allocation ID:</strong> ${allocation.id}<br>
+                    <strong>Module ID:</strong> ${allocation.moduleId}<br>
+                    <strong>Class ID:</strong> ${allocation.classId}<br>
+                    <strong>Cohort ID:</strong> ${allocation.cohortId}
                 </div>
                 <div class="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
@@ -239,19 +320,16 @@ class CourseManagementApp {
         };
 
         try {
-            const response = await fetch(`${this.apiBaseUrl}/api/v1/allocations`, {
+            const response = await this.makeAuthenticatedRequest(`${this.apiBaseUrl}/api/v1/allocations`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.token}`,
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(formData)
             });
 
             const data = await response.json();
 
             if (data.success) {
-                this.showStatus('Allocation created successfully!', 'success');
+                console.log('Created allocation with ID:', data.data.allocation.id);
+                this.showStatus(`Allocation created successfully! ID: ${data.data.allocation.id}`, 'success');
                 document.getElementById('createAllocationForm').reset();
                 // Reload allocations to show the new one
                 this.loadAllocations();
@@ -273,6 +351,40 @@ class CourseManagementApp {
         } else {
             spinner.classList.add('hidden');
             container.classList.remove('hidden');
+        }
+    }
+
+    async loadEntityIds() {
+        try {
+            // Load all entity types
+            const [modules, classes, cohorts, modes, facilitators] = await Promise.all([
+                this.makeAuthenticatedRequest(`${this.apiBaseUrl}/api/v1/modules`).then(r => r.json()),
+                this.makeAuthenticatedRequest(`${this.apiBaseUrl}/api/v1/classes`).then(r => r.json()),
+                this.makeAuthenticatedRequest(`${this.apiBaseUrl}/api/v1/cohorts`).then(r => r.json()),
+                this.makeAuthenticatedRequest(`${this.apiBaseUrl}/api/v1/modes`).then(r => r.json()),
+                this.makeAuthenticatedRequest(`${this.apiBaseUrl}/api/v1/facilitators`).then(r => r.json())
+            ]);
+
+            // Display entity IDs in console
+            console.log('=== AVAILABLE ENTITY IDs ===');
+            console.log('Modules:', modules.data?.modules || modules.data || []);
+            console.log('Classes:', classes.data?.classes || classes.data || []);
+            console.log('Cohorts:', cohorts.data?.cohorts || cohorts.data || []);
+            console.log('Modes:', modes.data?.modes || modes.data || []);
+            console.log('Facilitators:', facilitators.data?.facilitators || facilitators.data || []);
+            console.log('===========================');
+
+            // Also display in a status message
+            const moduleCount = (modules.data?.modules || modules.data || []).length;
+            const classCount = (classes.data?.classes || classes.data || []).length;
+            const cohortCount = (cohorts.data?.cohorts || cohorts.data || []).length;
+            const modeCount = (modes.data?.modes || modes.data || []).length;
+            const facilitatorCount = (facilitators.data?.facilitators || facilitators.data || []).length;
+
+            this.showStatus(`Loaded IDs: ${moduleCount} modules, ${classCount} classes, ${cohortCount} cohorts, ${modeCount} modes, ${facilitatorCount} facilitators. Check console for details.`, 'info');
+        } catch (error) {
+            console.error('Failed to load entity IDs:', error);
+            this.showStatus('Failed to load entity IDs. Check console for details.', 'error');
         }
     }
 

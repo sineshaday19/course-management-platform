@@ -57,17 +57,25 @@
             </h2>
             <div class="grid md:grid-cols-2 gap-6">
                 <div>
-                    <h3 class="text-lg font-semibold mb-3">Login</h3>
-                    <form id="loginForm" class="space-y-4">
+                                         <h3 class="text-lg font-semibold mb-3">Login</h3>
+                     <p class="text-sm text-gray-600 mb-4">Use credentials from your database or register a new account</p>
+                     <form id="loginForm" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="loginEmail" value="manager@test.com" 
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                         <input type="email" id="loginEmail" placeholder="Enter your email" 
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Password</label>
-                            <input type="password" id="loginPassword" value="TestPassword123!" 
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                         <input type="password" id="loginPassword" placeholder="Enter your password" 
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Role</label>
+                            <select id="loginRole" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option value="manager">Manager</option>
+                                <option value="facilitator">Facilitator</option>
+                            </select>
                         </div>
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
                             <i class="fas fa-sign-in-alt mr-2"></i>Login
@@ -75,22 +83,47 @@
                     </form>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold mb-3">Register</h3>
-                    <form id="registerForm" class="space-y-4">
+                                         <h3 class="text-lg font-semibold mb-3">Register</h3>
+                     <p class="text-sm text-gray-600 mb-4">Create a new account. Managers require invitation code.</p>
+                     <form id="registerForm" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Name</label>
-                            <input type="text" id="registerName" value="Test Manager" 
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                         <input type="text" id="registerName" placeholder="Enter your name" 
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="registerEmail" value="manager@test.com" 
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                         <input type="email" id="registerEmail" placeholder="Enter your email" 
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Password</label>
-                            <input type="password" id="registerPassword" value="TestPassword123!" 
+                                                         <input type="password" id="registerPassword" placeholder="Enter your password" 
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Role</label>
+                            <select id="registerRole" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" onchange="toggleInvitationCode()">
+                                <option value="facilitator">Facilitator</option>
+                                <option value="manager">Manager</option>
+                            </select>
+                        </div>
+                        <div id="invitationCodeField" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700">Invitation Code</label>
+                            <input type="text" id="invitationCode" placeholder="Enter invitation code for manager registration" 
                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div id="facilitatorFields" class="hidden">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Qualification</label>
+                                <input type="text" id="qualification" placeholder="Enter your qualification" 
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Location</label>
+                                <input type="text" id="location" placeholder="Enter your location" 
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            </div>
                         </div>
                         <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors">
                             <i class="fas fa-user-plus mr-2"></i>Register
@@ -110,7 +143,7 @@
                 <div class="grid md:grid-cols-3 gap-4 mb-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Cohort ID</label>
-                        <input type="text" id="cohortFilter" placeholder="test-cohort-id" 
+                        <input type="text" id="cohortFilter" placeholder="Enter cohort ID" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
@@ -159,22 +192,22 @@
                 <form id="createAllocationForm" class="grid md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Module ID</label>
-                        <input type="text" id="moduleId" placeholder="test-module-id" 
+                        <input type="text" id="moduleId" placeholder="Enter module ID" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Class ID</label>
-                        <input type="text" id="classId" placeholder="test-class-id" 
+                        <input type="text" id="classId" placeholder="Enter class ID" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Cohort ID</label>
-                        <input type="text" id="cohortId" placeholder="test-cohort-id" 
+                        <input type="text" id="cohortId" placeholder="Enter cohort ID" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Facilitator ID</label>
-                        <input type="text" id="facilitatorId" placeholder="test-facilitator-id" 
+                        <input type="text" id="facilitatorId" placeholder="Enter facilitator ID" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
@@ -187,7 +220,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Mode ID</label>
-                        <input type="text" id="modeId" placeholder="test-mode-id" 
+                        <input type="text" id="modeId" placeholder="Enter mode ID" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
@@ -213,6 +246,27 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+            <script src="app.js"></script>
+    <script src="notifications.js"></script>
+    <script>
+        function toggleInvitationCode() {
+            const role = document.getElementById('registerRole').value;
+            const invitationField = document.getElementById('invitationCodeField');
+            const facilitatorFields = document.getElementById('facilitatorFields');
+            
+            if (role === 'manager') {
+                invitationField.classList.remove('hidden');
+                facilitatorFields.classList.add('hidden');
+            } else {
+                invitationField.classList.add('hidden');
+                facilitatorFields.classList.remove('hidden');
+            }
+        }
+        
+        // Initialize fields on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleInvitationCode();
+        });
+    </script>
 </body>
 </html> 

@@ -7,6 +7,7 @@ const Facilitator = require('./Facilitator');
 const Mode = require('./Mode');
 const CourseAllocation = require('./CourseAllocation');
 const ActivityTracker = require('./ActivityTracker');
+const Notification = require('./Notification');
 
 // Manager - Facilitator relationship (One-to-Many)
 Manager.hasMany(Facilitator, {
@@ -103,5 +104,6 @@ module.exports = {
   Facilitator,
   Mode,
   CourseAllocation,
-  ActivityTracker
+  ActivityTracker,
+  Notification
 }; 

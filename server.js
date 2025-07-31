@@ -16,6 +16,7 @@ const allocationRoutes = require('./routes/allocations');
 const activityTrackerRoutes = require('./routes/activityTracker');
 const cohortRoutes = require('./routes/cohorts');
 const modeRoutes = require('./routes/modes');
+const notificationRoutes = require('./routes/notifications');
 
 const { errorHandler } = require('./middleware/errorHandler');
 const { authenticateToken } = require('./middleware/auth');
@@ -24,12 +25,14 @@ const { redisClient } = require('./config/redis');
 const { startNotificationWorker } = require('./workers/notificationWorker');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 const limiter = rateLimit({
@@ -96,6 +99,7 @@ app.use('/api/v1/allocations', authenticateToken, allocationRoutes);
 app.use('/api/v1/activity-tracker', authenticateToken, activityTrackerRoutes);
 app.use('/api/v1/cohorts', authenticateToken, cohortRoutes);
 app.use('/api/v1/modes', authenticateToken, modeRoutes);
+app.use('/api/v1/notifications', authenticateToken, notificationRoutes);
 
 app.use(errorHandler);
 
@@ -117,21 +121,15 @@ const startServer = async () => {
       console.log('✅ Database models synchronized.');
     }
 
-    try {
-        await redisClient.ping();
-        console.log('✅ Redis connection established successfully.');
-        
-        startNotificationWorker();
-        console.log('✅ Notification worker started.');
-    } catch (error) {
-        console.log('⚠️ Redis not available - running without notification system');
-        console.log('💡 To enable notifications, install Redis: https://redis.io/download');
-    }
+    // Start notification worker (now uses database instead of Redis)
+    startNotificationWorker();
+    console.log('✅ Notification worker started.');
 
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
       console.log(`🏥 Health Check: http://localhost:${PORT}/health`);
+      console.log(`🌐 Network Access: http://192.168.1.70:${PORT}`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
